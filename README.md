@@ -1,5 +1,5 @@
 <h1>MQTT-Relay-kit</h1>
-MicroPython and openSCAD code to make a complete MQTT Client Relay.
+MicroPython and STL's including openSCAD code to make a complete MQTT Client Relay.
 <br>
 This "kit" includes both the running python code as well as the scad/stl files to make a 3d printed enclosure.
 <br>
