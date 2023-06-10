@@ -1,0 +1,63 @@
+# This is a build on a esp32-s2 on a D1 Mini card
+# after powering up
+# Press AND HOLD the button labelled 0
+# then press and release the RESET button, then release 0
+# and it should appear as a serial device.
+# This is common to all ESP32-S2's, it's not just "S2 Mini" board.
+# note /dev/ttyACM0 will need to have ownership changed or run commands as root sudo
+#
+# this makes things simpler so do this and logout and in
+sudo usermod -a -G dialout $USER
+
+# install tools 
+sudo pip install esptool
+sudo apt install picocom 
+sudo pip install adafruit-ampy
+
+# this is here for cut and paste
+
+sudo chmod 666 /dev/ttyACM0
+
+# if you had done this the above was not needed
+sudo usermod -a -G dialout $USER
+
+#now get the current MicroPython installed on the esp32s2
+esptool.py --port /dev/ttyACM0 erase_flash
+esptool.py --chip esp32s2 --port /dev/ttyACM0 write_flash -z 0x1000 GENERIC_S2-20230426-v1.20.0.bin
+
+# now just press R (RST)  to continue
+# R also may be needed after a power cycle
+
+ampy --port /dev/ttyACM0 put main.py
+ampy --port /dev/ttyACM0 put run.py
+ampy --port /dev/ttyACM0 put relay.py
+ampy --port /dev/ttyACM0 put boot.py
+ampy --port /dev/ttyACM0 put mqtt_as.py
+
+ampy --port /dev/ttyACM0 put relay_config.py
+
+# test code - had to pull to do a diff
+mkdir diff
+ampy --port /dev/ttyACM0 get main.py  diff/main.py
+ampy --port /dev/ttyACM0 get run.py diff/run.py
+ampy --port /dev/ttyACM0 get relay.py diff/relay.py
+ampy --port /dev/ttyACM0 get relay_config.py diff/relay_config.py
+ampy --port /dev/ttyACM0 get boot.py diff/boot.py
+ampy --port /dev/ttyACM0 get mqtt_as.py   diff/mqtt_as.py 
+
+
+# test stuff
+
+mosquitto_sub -h 192.168.0.173 -t "jed/relay1_status"
+
+
+# sample test MQTT pubsub
+mosquitto_sub -h 192.168.0.173 -t "jed/relay1_status"
+mosquitto_pub -h 192.168.0.173 -t "jed/relay1" -m "on"
+
+# REPL 
+picocom -b 115200 /dev/ttyACM0
+# some needed picocom commands
+# CTRL-A CTRK-X  to exit
+# import main   to run main or other py
+# CTRL-C will stop some code
