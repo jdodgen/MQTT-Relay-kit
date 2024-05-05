@@ -8,5 +8,10 @@ The parts to build this are:<br>
 <b>HiLetgo D1 Mini Relay Shield</b> or equivilant<br><pr>
 Different relay boards may require changing the lid in the openSCAD code
 
-this is still a work in progress current: 9-June-2023.
+LOG
+<pre>
+9-June-2023
+This is still a work in progress current: 9-June-2023.<br>
+4-May-2024
+The hardware is solid, for code improvements see the other MQTT projects
 
